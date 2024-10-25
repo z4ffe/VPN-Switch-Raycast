@@ -4,7 +4,7 @@ export interface IVPN {
   status: boolean;
 }
 
-export class VpnEntity implements IVPN {
+export class VPN implements IVPN {
   public id;
   public name;
   public status;

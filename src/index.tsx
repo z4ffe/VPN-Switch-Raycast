@@ -1,38 +1,38 @@
 import { getPreferenceValues } from '@raycast/api';
 import { exec } from 'child_process';
 import util from 'util';
+import { CMD_PATH, REGEXP_VPN } from './constants';
 import { RayacastPreferences } from './types';
-import { REGEXP_VPN } from './utils';
-import { IVPN } from './vpn.entity';
+import { IVPN, VPN } from './vpn.entity';
 
-const CMD_PATH = '/usr/sbin/scutil';
-const VPN_LIST = `${CMD_PATH} --nc list | grep "Shadowrocket"`;
+let VPN_INSTANCE: IVPN;
 
-const toggleVPN = async () => {
-  const preferences = getPreferenceValues<RayacastPreferences>();
-  const VPN_NAME = preferences.vpnName;
-  console.log(VPN_NAME);
-  let vpnInstance: IVPN;
+const executeScript = async (command: string) => {
   const execAsync = util.promisify(exec);
-  const { stdout } = await execAsync(VPN_LIST);
-  const splitedResult = stdout.split('\n').find((str) => str.includes(VPN_NAME));
-  const parsedData = REGEXP_VPN.exec(splitedResult);
-  /* if (splitedResult) {
-								vpnInstance = new VpnEntity(parsedData[2], parsedData[3], parsedData[1]);
-							 } else {
-								return;
-							 }
-							 if (splitedResult && vpnInstance.status) {
-								if (parsedData) {
-								  const execAsync = util.promisify(exec);
-								  await execAsync(`${CMD_PATH} --nc stop ${vpnInstance.id}`);
-								  await showHUD('VpnEntity DISCONNECTED', { popToRootType: PopToRootType.Immediate });
-								}
-							 } else {
-								await showHUD('NOT FOUND VPNs', { popToRootType: PopToRootType.Immediate });
-							 } */
+  const { stdout } = await execAsync(command);
+  return stdout;
 };
 
-export default function Command() {
-  void toggleVPN();
+const findVpn = async (vpnName: string) => {
+  const VPN_LIST = `${CMD_PATH} --nc list | grep "${vpnName}"`;
+  const result = await executeScript(VPN_LIST);
+  const splittedResult = result.split('\n').find((str) => str.includes(vpnName));
+  if (splittedResult) {
+    const parsedVpnData = REGEXP_VPN.exec(splittedResult);
+    VPN_INSTANCE = new VPN(parsedVpnData[2], parsedVpnData[3], parsedVpnData[1]);
+  }
+};
+
+const toggleVPN = async (vpnName: string) => {
+  await findVpn(vpnName);
+  if (!VPN_INSTANCE.status) {
+    await executeScript(`${CMD_PATH} --nc start ${VPN_INSTANCE.id}`);
+  } else {
+    await executeScript(`${CMD_PATH} --nc stop ${VPN_INSTANCE.id}`);
+  }
+};
+
+export default async function Command() {
+  const { vpnName } = getPreferenceValues<RayacastPreferences>();
+  await toggleVPN(vpnName);
 }
