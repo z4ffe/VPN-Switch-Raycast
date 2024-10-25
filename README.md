@@ -1,3 +1,3 @@
-# VPN Switch
+# VpnEntity Switch
 
 TBA

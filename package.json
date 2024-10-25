@@ -2,7 +2,7 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "vpn-switch",
   "title": "VPN Switch",
-  "description": "TBA",
+  "description": "Simple VPN Switch",
   "icon": "command-icon.png",
   "author": "zaffe",
   "categories": [
@@ -13,8 +13,19 @@
     {
       "name": "index",
       "title": "VPN Switch",
-      "description": "TBA TBA",
-      "mode": "view"
+      "description": "Simple VPN Switch",
+      "mode": "no-view"
+    }
+  ],
+  "preferences": [
+    {
+      "description": "Which VPN you want to toggle by extension.",
+      "label": "VPN Name",
+      "name": "vpnName",
+      "required": true,
+      "title": "VPN Name",
+      "type": "textfield",
+      "placeholder": "Type VPN Name"
     }
   ],
   "dependencies": {

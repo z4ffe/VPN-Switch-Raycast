@@ -1,7 +1,7 @@
 import { exec } from "child_process";
 import util from "util";
 
-const VPN_NAME: string = "Shadowrocket"; // type VPN connection name
+const VPN_NAME: string = "Shadowrocket"; // type VpnEntity connection name
 
 interface IVPN {
   id: number
@@ -9,7 +9,7 @@ interface IVPN {
   status: boolean
 }
 
-class VPN implements IVPN {
+class VpnEntity implements IVPN {
   public id
   public name
   public status
@@ -25,7 +25,7 @@ class WGControl {
   VPN_NAME;
   CMD_PATH = "/usr/sbin/scutil";
   VPN_LIST = `${this.CMD_PATH} --nc list | grep "Shadowrocket"`;
-  REG_VPN = /(\(\w+\))\s+([\w-]+?)\s+VPN\s+\(.*?"(.*?)"?\s+\[VPN:/gm;
+  REG_VPN = /(\(\w+\))\s+([\w-]+?)\s+VpnEntity\s+\(.*?"(.*?)"?\s+\[VpnEntity:/gm;
 
   constructor(vpnName: string) {
     this.VPN_NAME = vpnName;
@@ -40,7 +40,7 @@ class WGControl {
   }
 
   #notFound() {
-    console.log(`VPN with ${this.VPN_NAME} name not found`);
+    console.log(`VpnEntity with ${this.VPN_NAME} name not found`);
   }
 
   async #execScript(command) {
