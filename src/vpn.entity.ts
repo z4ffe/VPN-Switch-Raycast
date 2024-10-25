@@ -1,8 +1,4 @@
-export interface IVPN {
-  id: string;
-  name: string;
-  status: boolean;
-}
+import { IVPN } from './types';
 
 export class VPN implements IVPN {
   public id;
